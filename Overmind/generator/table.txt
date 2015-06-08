@@ -1,0 +1,113 @@
+enumeration Enum
+{
+    zero = 0,
+    uno,
+    dos,
+    tres,
+    quatro = 4
+};
+
+enumeration EnumClass : unsigned int {
+    a = 0,
+    s,
+    d,
+    f,
+    r = 4
+};
+
+structure MixedTable { 
+    double alamagusa;
+    virtual std::vector<int>& Vectorize(int i) = 0;
+    metamethod void VectorizeIt(const int& i) = 0;
+};
+
+structure tableA { double alamagusa; };
+			structure     Bamboo
+			{
+				int a;
+				string babab;
+				string lolol;
+				double c12231; //this is comment
+				tableA d;
+
+				metamethod void foo() = 0; /* MUHAHA */
+				metamethod void foo3(tableA& b) = 0;
+				metamethod int SomeExecutableFunction(const int a, string dob1, int b) = 0;
+			};
+
+		struct NonScriptableStructure
+		{
+			int field;
+			metamethod void fakeMethod(int i) = 0;
+		};
+
+		structure Caitung_12345 
+		{ type name; };
+
+		struct Vectorized // will be ignored by parser
+		{ 
+			std::vector<int> vector;
+			std::list<int> list;
+			std::vector<Caitung_12345> list;
+		};
+
+////////////////////////////////////////////////////////////////////////////////////////
+//from LUA binder:
+// terminate constructor and destructor. these functions are not required for objects registered from C++
+
+inline void luaX_register(LUA_VM L,
+              LPCSTR in_ClassName,
+              lua_CFunction in_Constructor,
+              lua_CFunction in_Destructor,
+              const luaL_Reg* in_MethodTable)
+{
+    lua_newtable(L);
+    int methodtable = lua_gettop(L);
+    luaL_newmetatable(L, in_ClassName);
+    int metatable = lua_gettop(L);
+
+    //make the metatable unavailable from LUA get_metatable
+    lua_pushliteral(L, "__metatable");
+    lua_pushvalue(L, methodtable);
+    lua_settable(L, metatable);
+
+    //make metatatable closed, to not allow new field
+    lua_pushliteral(L, "__index");
+    lua_pushvalue(L, methodtable);
+    lua_settable(L, metatable);
+
+    //register destructor of the metatable
+    lua_pushliteral(L, "__gc");
+    lua_pushcfunction(L, in_Destructor);
+    lua_settable(L, metatable);
+
+    lua_pop(L, 1);
+
+    // registers new metatable from the first element on the stack (metatable itself)
+    luaL_openlib(L, 0, in_MethodTable, 0);
+    lua_pop(L, 1);
+
+    //register constructor of the metatable
+    // not required for objects registered from C++
+    lua_register(L, in_ClassName, in_Constructor);
+};
+
+// i think we should have lua_pushlightuserdata(L, LPVOID(ptr))
+template
+<typename T>
+inline LPVOID luaX_createUserData(LUA_VM L, T* obj) 
+{
+    return (*(void**)(lua_newuserdata(L, sizeof(void*))) = (obj));
+}
+// Lua metatable constructor
+METHOD(_create)
+{
+    LPLUA_WNDSETTINGS wnd = new LUA_WNDSETTINGS();
+    memset(wnd, 0, sizeof(LUA_WNDSETTINGS));
+    wnd->wnd.cSize = sizeof(LUA_WNDSETTINGS);
+    luaX_createUserData<LUA_WNDSETTINGS>(L, wnd);
+     
+    luaL_getmetatable(L, className);
+    lua_setmetatable(L, -2);
+    return 1;
+};

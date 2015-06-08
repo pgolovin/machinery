@@ -1,0 +1,8 @@
+To generate code run the following command:
+    build.py
+
+Code will be placed to .build/<project_type> directory.
+Executables and dynamic libraries will be built to _build/<project_type>/bin directory
+Static libraries will be built to _build/<project_type>/lib directory
+
+Game concept added to master/docs/gameconcept.docx
