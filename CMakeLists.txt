@@ -8,10 +8,11 @@ update_compiler_settings()
 #check_apple_platform()
 
 # Global variables
+set(3RDPARTY_UNPACK_DIR ${PROJECT_SOURCE_DIR}/.unpack)
 set(3RDPARTY_DIR ${CMAKE_CURRENT_LIST_DIR}/3rdParty)
-set(SDL_DIR ${CMAKE_CURRENT_LIST_DIR}/../.build/_unpack/SDL/SDL2)
+set(SDL_DIR ${3RDPARTY_UNPACK_DIR}/SDL/SDL2)
 set(ANGLE_DIR ${3RDPARTY_DIR}/angle)
-set(GLM_DIR ${CMAKE_CURRENT_LIST_DIR}/../.build/_unpack/GLM)
+set(GLM_DIR ${3RDPARTY_UNPACK_DIR}/GLM)
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8) 
     set(ARCH_64 TRUE) 

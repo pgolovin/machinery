@@ -1,9 +1,9 @@
 #pragma once
 #define GLM_FORCE_RADIANS
-#include "../3rdParty/_unpack/GLM/glm/glm.hpp"
-#include "../3rdParty/_unpack/GLM/glm/gtx/quaternion.hpp"
-#include "../3rdParty/_unpack/GLM/glm/gtc/matrix_transform.hpp"
-#include "../3rdParty/_unpack/GLM/glm/gtc/type_ptr.hpp"
+#include "glm/glm.hpp"
+#include "glm/gtx/quaternion.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 typedef glm::vec2 vector2f_t;
 typedef glm::vec3 vector3f_t;

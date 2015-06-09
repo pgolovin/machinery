@@ -11,7 +11,7 @@
 #include <vector>
 #include <cstdint>
 
-enumeration ElementType : unsigned int
+enumeration ElementType : uint32_t
 {
     Space   = 0,                 // empty space
     Cube,                        // simple cube
@@ -32,7 +32,7 @@ enumeration ElementType : unsigned int
     Reference   = 0xffffffff,    // reference to an object located in different cell.
 };
 
-enum DirectionIndices : unsigned char
+enum DirectionIndices : uint8_t
 {
     pX_idx = 0,
     pY_idx,
@@ -43,10 +43,11 @@ enum DirectionIndices : unsigned char
 
     mirroredX_idx = 8,
     mirroredZ_idx,
+    mirroredY_idx,
 };
 // enum represents direction of the element,
 // also the same enum is used for visible faces definitions
-enumeration Directions : unsigned short
+enumeration Directions : uint16_t
 {
     NO = 0x00,
 
@@ -59,16 +60,22 @@ enumeration Directions : unsigned short
 
     FrontToBack = (1 << DirectionIndices::mirroredZ_idx),
     LeftToRight = (1 << DirectionIndices::mirroredX_idx),
-
-    UpSideDown,
+    UpSideDown  = (1 << DirectionIndices::mirroredY_idx),
 
     All = 0xFF,
+};
+
+enumeration JointType : uint8_t
+{
+    JT_none = 0,
+    JT_rotation,
+    JT_stretch,
 };
 
 #define DIRECTION_MASK   0x00ff
 #define MODIFICATOR_MASK 0xff00
 
-enum Influences : unsigned int
+enum Influences : uint32_t
 {
     NOT_AFFECTED    = 0,
     WEDGE_TRIANGLE  = 5,

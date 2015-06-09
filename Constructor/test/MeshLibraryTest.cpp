@@ -26,10 +26,6 @@ TEST_F(MeshLibraryTest, GetSpaceMesh)
     MeshProperties prop = {Directions::All, vector3f_t(0,0,0)};
     mesh.ConstructGeometry(prop, desc);
     ASSERT_EQ(0, desc.Positions.Data.size());
-    IMeshPtr meshCloneTemp = mesh.Clone();
-    ILibraryMesh* meshClone = (ILibraryMesh*)meshCloneTemp.get();
-    meshClone->ConstructGeometry(prop, desc);
-    ASSERT_EQ(0, desc.Positions.Data.size()) << "incorrect cloned object";
 }
 
 TEST_F(MeshLibraryTest, GetCubeMesh)
@@ -40,18 +36,6 @@ TEST_F(MeshLibraryTest, GetCubeMesh)
     IMesh::Shape desc;
     MeshProperties prop = {Directions::All, vector3f_t(0,0,0)};
     mesh.ConstructGeometry(prop, desc);
-    ASSERT_EQ(108, desc.Positions.Data.size()) << "incorrect number of vertices";
-}
-
-TEST_F(MeshLibraryTest, GetClonedCubeMesh)
-{
-    ILibrary& lib = m_constructor->GetLibrary();
-    IMeshPtr meshCloneTemp = lib.GetMesh(ElementType::Cube).Clone();
-    ILibraryMesh* meshClone = (ILibraryMesh*)meshCloneTemp.get();
-    IMesh::Shape desc;
-
-    MeshProperties prop = {Directions::All, vector3f_t(0,0,0)};
-    meshClone->ConstructGeometry(prop, desc);
     ASSERT_EQ(108, desc.Positions.Data.size()) << "incorrect number of vertices";
 }
 

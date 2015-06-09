@@ -1,12 +1,13 @@
 import sys
-import os
+import os, os.path
 import traceback
 import glob
-from optparse import OptionParser
+import argparse
 sys.path.append("./Scripts")
 from subprocess import call
 import ntpath
 import shutil
+import zipfile
 
 
 class Builder:
@@ -37,10 +38,10 @@ class Builder:
             self.__curGenType = genType
         if not (self.__curGenType in self.__genTypes):
             raise Exception('Invalid generation type: ' + genType)
-        # Unpack of 3rdParty
-        #self.__unpack('qt')
-        #self.__unpack('SDL')
-        #self.__unpack('GLM')
+
+        if not self.__unpack('GLM'):
+            print "Unable to generate project"
+            return            
         # CMake generation
         print "Generating project " + self.__curGenType + "..."
         self.__outPath = './.build/' + self.__curGenType
@@ -59,65 +60,58 @@ class Builder:
         print "INFO: Build is not implemented yet!"
 
     def Clean(self):
-        shutil.rmtree("./.build", ignore_errors=True)
-        shutil.rmtree("../_unpack", ignore_errors=True)
+        shutil.rmtree(".build", ignore_errors=True)
+        shutil.rmtree(".unpack", ignore_errors=True)
 
-#    def __unpack(self, module):
-#        # Unpack module
-#        print "Unpacking " + module + "..."
-#        srcPath = "./3rdParty/" + module + "/"
-#        dstPath = "../_unpack/" + module + "/"
-#        if not os.path.exists(dstPath) or not os.path.isdir(dstPath) or not os.listdir(dstPath):
-#            # Extract zip files
-#            files = glob.glob(srcPath + "*.zip")
-#            for f in files:
-#                basename = ntpath.basename(f)
-#                basename = os.path.splitext(basename)[0]
-#                if not os.path.exists(dstPath) or not os.path.isdir(dstPath):
-#                    os.makedirs(dstPath)
-#                utils.Unzip(f, dstPath)
-#            # Extract tar files
-#            files = glob.glob(srcPath + "*.bz2")
-#            for f in files:
-#                basename = ntpath.basename(f)
-#                basename = os.path.splitext(basename)[0]
-#                dstPathForBz2 = dstPath + basename
-#                if not os.path.exists(dstPathForBz2) or not os.path.isdir(dstPathForBz2):
-#                    os.makedirs(dstPathForBz2)
-#                utils.Untar(f, dstPathForBz2)
-#
-#        print "Unpacking " + module + "...DONE"
-#
-#    __curGenType = ''
-#    __genTypes = []
-#    __outPath = ''
+    def __unpack(self, module):
+        # Unpack module
+        print "Unpacking " + module + "..."
+        currentDir = os.path.abspath(os.path.curdir)
+        
+        print currentDir
+        srcPath = os.path.join(currentDir, "3rdParty", module, "glm.zip")
+        if not os.path.exists(srcPath):
+            print("Unpack failure: required module", module, "not found")
+            return False
+        dstPath = os.path.join(currentDir, ".unpack", module)
+        if os.path.exists(dstPath) and os.path.isdir(dstPath):
+            return True
+            
+        Zip = zipfile.ZipFile(srcPath)
+        
+        if Zip != None:
+            Zip.extractall(dstPath)
+            Zip.close()
+
+        print "Unpacking " + module + "...DONE"
+        return True        
+
+    __curGenType = ''
+    __genTypes = []
+    __outPath = ''
 
 
 def main():
     try:
-        parser = OptionParser()
-        parser.add_option("-t", "--type", help="type of output for cmake, for a list use -l or --list_types", metavar="TYPE", dest="GenType")
-        parser.add_option("-l", "--list_types", help="lists generation type", dest="ListTypes", default=False, action="store_true")
-        parser.add_option("-b", "--build", help="build the prject", dest="Build", default=False, action="store_true")
-        parser.add_option("-c", "--clean", help="clean project", dest="Clean", default=False, action="store_true")
-        (options, args) = parser.parse_args()
+        parser = argparse.ArgumentParser()
+        parser.add_argument("-t", "--type",        help="Type of output for cmake", type=str)
+        parser.add_argument("-l", "--list_types",  help="Lists generation type",    action="store_true")
+        group = parser.add_mutually_exclusive_group()
+        group.add_argument ("-b", "--build",       help="Build the project",        action="store_true")
+        group.add_argument ("-c", "--clean",       help="Clean project",            action="store_true")
+        args = parser.parse_args()
 
         builder = Builder()
-        if options.ListTypes:
+        if args.list_types:
             builder.ListTypes()
             return
 
-        if options.Build and options.Clean:
-            print "ERROR: Can't use --build and --clean options at the same time"
-            parser.print_help()
-            return
-
-        if options.Clean:
+        if args.clean:
             builder.Clean()
             return
 
-        builder.Generate(options.GenType)
-        if options.Build:
+        builder.Generate(args.type)
+        if args.build:
             builder.Build()
 
     except Exception:

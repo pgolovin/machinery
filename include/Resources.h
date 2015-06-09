@@ -40,9 +40,6 @@ struct IConstructorObject
 };
 
 struct IMesh 
-    : public IResource
-    , public IHandle
-    , public IClonable<IMeshPtr> 
 {
     enum class LayoutType
     {
@@ -81,11 +78,11 @@ struct IMesh
     virtual const Desc& GetDesc() const = 0;
 };
 
-struct ITexture : public IResource 
+struct ITexture
 {
     // tbd
 };
 
-struct IScript : public IResource 
+struct IScript
 {
 };

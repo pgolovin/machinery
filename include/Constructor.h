@@ -23,7 +23,7 @@ structure Constructor// : public Object
 {
     // script published methods
     metamethod void     NewConstruction() = 0;
-    metamethod Status PlaceObject(PlacementParameters& parameters) = 0;
+    metamethod Status   PlaceObject(PlacementParameters& parameters) = 0;
     metamethod bool     Weld(uint32_t group1, uint32_t group2) = 0;
     metamethod void     Reset() = 0;
 

@@ -1,6 +1,5 @@
 #include "Library.h"
 #include <memory>
-#include "HandleImpl.h"
 
 ///////////////////////////////////////////////////////////////////////////////////
 // base class for all primitive meshes
@@ -96,10 +95,6 @@ class mesh_Space : public BaseMesh
 {
 public:
     mesh_Space() {};
-    virtual IMeshPtr Clone() const 
-    {
-        CLONE_HANDLE(IMesh, mesh_Space);
-    };
 };
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -135,11 +130,6 @@ public:
         m_vertices.assign(vertices, vertices + sizeof(vertices)/sizeof(float));
         m_normals.assign(normals, normals + sizeof(normals)/sizeof(float));
     }
-
-    virtual IMeshPtr Clone() const 
-    {
-        CLONE_HANDLE(IMesh, mesh_Cube);
-    };
 
     virtual void ConstructGeometry(const MeshProperties& properties, IMesh::Shape& out_descriptor) const
     {
@@ -205,11 +195,6 @@ public:
         m_vertices.assign(vertices, vertices + sizeof(vertices)/sizeof(float));
         m_normals.assign(normals, normals + sizeof(normals)/sizeof(float));
     }
-
-    virtual IMeshPtr Clone() const 
-    {
-        CLONE_HANDLE(IMesh, mesh_Wedge);
-    };
 
     virtual void ConstructGeometry(const MeshProperties& properties, IMesh::Shape& out_descriptor) const
     {
@@ -287,11 +272,6 @@ public:
         m_normals.assign(normals, normals + sizeof(normals)/sizeof(float));
     }
 
-    virtual IMeshPtr Clone() const 
-    {
-        CLONE_HANDLE(IMesh, mesh_WedgeOutCorner);
-    };
-
     virtual void ConstructGeometry(const MeshProperties& properties, IMesh::Shape& out_descriptor) const
     {
         //uint32_t flags = properties.flags;
@@ -368,11 +348,6 @@ public:
         m_normals.assign(normals, normals + sizeof(normals)/sizeof(float));
     }
 
-    virtual IMeshPtr Clone() const 
-    {
-        CLONE_HANDLE(IMesh, mesh_WedgeInCorner);
-    };
-
     virtual void ConstructGeometry(const MeshProperties& properties, IMesh::Shape& out_descriptor) const
     {
         const index_t indexGroups[] = 
@@ -448,11 +423,6 @@ public:
         m_vertices.assign(vertices, vertices + sizeof(vertices)/sizeof(float));
         m_normals.assign(normals, normals + sizeof(normals)/sizeof(float));
     }
-
-    virtual IMeshPtr Clone() const 
-    {
-        CLONE_HANDLE(IMesh, mesh_Cilinder);
-    };
 
     virtual void ConstructGeometry(const MeshProperties& properties, IMesh::Shape& out_descriptor) const
     {
